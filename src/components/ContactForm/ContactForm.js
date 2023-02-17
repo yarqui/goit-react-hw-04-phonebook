@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { Form, InputLabel, InputField, AddButton } from './ContactForm.styled';
 
 const ContactForm = ({ onSubmit }) => {
-  console.log('onSubmit:', onSubmit);
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -83,7 +82,7 @@ const ContactForm = ({ onSubmit }) => {
 };
 
 ContactForm.propTypes = {
-  obSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default ContactForm;

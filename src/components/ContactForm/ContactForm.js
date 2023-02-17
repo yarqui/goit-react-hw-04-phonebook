@@ -7,8 +7,8 @@ const ContactForm = ({ onSubmit }) => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const nameInputId = useMemo(() => nanoid(), []);
-  const numberInputId = useMemo(() => nanoid(), []);
+  const nameInputId = useMemo(() => nanoid(4), []);
+  const numberInputId = useMemo(() => nanoid(4), []);
 
   const resetForm = () => {
     setName('');
@@ -35,7 +35,7 @@ const ContactForm = ({ onSubmit }) => {
   const handleSubmit = e => {
     e.preventDefault();
 
-    const id = nanoid();
+    const id = nanoid(6);
 
     onSubmit({ id, name, number });
 

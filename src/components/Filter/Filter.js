@@ -8,7 +8,7 @@ import {
 } from 'components/ContactForm/ContactForm.styled';
 
 const Filter = ({ filterQuery }) => {
-  const filterId = useMemo(() => nanoid(), []);
+  const filterId = useMemo(() => nanoid(4), []);
 
   const handleChange = e => {
     const { value } = e.target;

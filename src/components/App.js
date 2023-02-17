@@ -1,96 +1,78 @@
-import React, { Component } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { useEffect, useState } from 'react';
 import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Section from './Section';
 import Filter from './Filter';
 import { List } from './ContactList/ContactList.styled';
 
-export default class App extends Component {
-  state = {
-    contacts: [
-      // { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-      // { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-      // { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-      // { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-    ],
-    filter: '',
-  };
+const App = () => {
+  const [contacts, setContacts] = useState(
+    () => JSON.parse(localStorage.getItem('contacts')) ?? []
+  );
+  const [filter, setFilter] = useState('');
+  const [filteredContacts, setFilteredContacts] = useState([]);
 
-  componentDidMount() {
-    try {
-      const parsedContacts = JSON.parse(localStorage.getItem('contacts'));
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
-      if (parsedContacts) {
-        this.setState({ contacts: parsedContacts });
-      }
-    } catch (error) {
-      console.log('error.name:', error.name);
-      console.log('error.message:', error.message);
-    }
-  }
+  useEffect(() => {
+    setFilteredContacts(
+      contacts.filter(contact => contact.name.toLowerCase().includes(filter))
+    );
+  }, [contacts, filter]);
 
-  componentDidUpdate(_, prevState) {
-    if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
-
-  doesContactExist = queue => {
-    const { contacts } = this.state;
-
+  const doesContactExist = queue => {
     return contacts.some(contact => contact.name === queue);
   };
 
-  handleSubmit = ({ id, name, number }) => {
-    const alreadyExists = this.doesContactExist(name);
+  const handleSubmit = ({ id, name, number }) => {
+    const alreadyExists = doesContactExist(name);
 
     if (alreadyExists) {
-      alert(`${name} is already in contacts`);
+      toast.warning(`'${name}' is already in contacts`);
       return;
     }
 
-    this.setState(({ contacts }) => ({
-      contacts: [...contacts, { id, name, number }],
-    }));
-
-    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    setContacts(prevContacts => [...prevContacts, { id, name, number }]);
   };
 
-  handleFilter = queue => {
-    queue ? this.setState({ filter: queue }) : this.setState({ filter: '' });
+  const handleFilter = queue => {
+    queue ? setFilter(queue) : setFilter('');
   };
 
-  showFilteredContacts = () => {
-    const { contacts, filter } = this.state;
-    const filteredContacts = contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter)
+  const deleteFromContacts = id => {
+    setContacts(
+      contacts.filter(contact => {
+        return contact.id !== id;
+      })
     );
-
-    return filteredContacts;
   };
 
-  deleteFromContacts = id => {
-    this.setState(({ contacts }) => {
-      return { contacts: contacts.filter(contact => contact.id !== id) };
-    });
-  };
+  return (
+    <>
+      <Section title="Phonebook">
+        <ContactForm onSubmit={handleSubmit} />
+      </Section>
+      <Section title="Contacts">
+        <Filter filterQuery={handleFilter}></Filter>
+        <List>
+          <ContactList
+            filteredContacts={filteredContacts}
+            onDeleteContact={deleteFromContacts}
+          />
+        </List>
+      </Section>
+      <ToastContainer
+        theme="colored"
+        position="top-center"
+        autoClose="1500"
+      ></ToastContainer>
+    </>
+  );
+};
 
-  render() {
-    return (
-      <>
-        <Section title="Phonebook">
-          <ContactForm onSubmit={this.handleSubmit} />
-        </Section>
-        <Section title="Contacts">
-          <Filter filterQuery={this.handleFilter}></Filter>
-          <List>
-            <ContactList
-              filteredContacts={this.showFilteredContacts()}
-              onDeleteContact={this.deleteFromContacts}
-            />
-          </List>
-        </Section>
-      </>
-    );
-  }
-}
+export default App;

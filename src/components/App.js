@@ -82,7 +82,7 @@ export default class App extends Component {
           <ContactForm onSubmit={this.handleSubmit} />
         </Section>
         <Section title="Contacts">
-          <Filter filterQueue={this.handleFilter}></Filter>
+          <Filter filterQuery={this.handleFilter}></Filter>
           <List>
             <ContactList
               filteredContacts={this.showFilteredContacts()}

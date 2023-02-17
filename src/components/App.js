@@ -3,7 +3,6 @@ import ContactForm from './ContactForm';
 import ContactList from './ContactList';
 import Section from './Section';
 import Filter from './Filter';
-import { nanoid } from 'nanoid';
 import { List } from './ContactList/ContactList.styled';
 
 export default class App extends Component {
@@ -50,7 +49,6 @@ export default class App extends Component {
       return;
     }
 
-    id = nanoid();
     this.setState(({ contacts }) => ({
       contacts: [...contacts, { id, name, number }],
     }));
@@ -81,7 +79,7 @@ export default class App extends Component {
     return (
       <>
         <Section title="Phonebook">
-          <ContactForm handleSubmit={this.handleSubmit} />
+          <ContactForm onSubmit={this.handleSubmit} />
         </Section>
         <Section title="Contacts">
           <Filter filterQueue={this.handleFilter}></Filter>
